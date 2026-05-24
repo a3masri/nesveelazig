@@ -1,0 +1,16 @@
+# Netlify — Neşve Elazığ
+# https://docs.netlify.com/configure-builds/file-based-configuration/
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Demo mode on Netlify (no Firebase keys required). Set false + add env vars for production Firebase.
+  VITE_LOCAL_MODE = "true"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

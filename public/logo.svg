@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 100" role="img" aria-label="Neşve">
+  <text
+    x="160"
+    y="58"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="52"
+    fill="#3D5A6C"
+  >neşve</text>
+  <text
+    x="160"
+    y="82"
+    text-anchor="middle"
+    font-family="Poppins, system-ui, sans-serif"
+    font-size="12"
+    font-weight="600"
+    letter-spacing="0.4em"
+    fill="#3D5A6C"
+    opacity="0.9"
+  >NEXT</text>
+</svg>
