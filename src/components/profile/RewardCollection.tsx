@@ -117,9 +117,11 @@ export function RewardCollection({ previewLimit, showHeader = true, id = 'reward
             <CollectibleChip
               key={ticket.id}
               name={ticket.rewards?.name || 'Ödül'}
+              description={ticket.rewards?.description}
               emoji={ticket.rewards?.emoji}
               category={ticket.rewards?.category}
               rarity={ticket.rarity}
+              pointValue={ticket.rewards?.point_cost}
               status={ticket.status}
               onClick={() => {
                 playUnlock();

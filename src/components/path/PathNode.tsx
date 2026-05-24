@@ -24,24 +24,22 @@ export function PathNodeCard({ node, nextNode, points, state, accent, side, inde
     side === 'center'
       ? 'justify-center'
       : side === 'left'
-        ? 'justify-start pl-2 sm:pl-6'
-        : 'justify-end pr-2 sm:pr-6';
+        ? 'justify-start'
+        : 'justify-end';
 
-  const offsetClass =
+  const cardWidth =
     side === 'center'
-      ? 'mx-auto'
-      : side === 'left'
-        ? 'mr-auto ml-0 sm:ml-4 max-w-[min(100%,280px)]'
-        : 'ml-auto mr-0 sm:mr-4 max-w-[min(100%,280px)]';
+      ? 'w-full max-w-[min(100%,320px)] mx-auto'
+      : 'w-full max-w-[min(100%,300px)]';
 
   return (
     <div
-      className={`relative flex mb-10 sm:mb-14 last:mb-6 ${alignClass} animate-path-node-in`}
+      className={`relative flex mb-12 sm:mb-16 last:mb-8 ${alignClass} animate-path-node-in`}
       style={{ animationDelay: `${Math.min(index, 8) * 60}ms`, opacity: 0 }}
       data-path-node={node.id}
     >
       <div
-        className={`relative z-10 w-full ${offsetClass}`}
+        className={`relative z-10 ${cardWidth} px-1 sm:px-2`}
         style={
           {
             '--path-accent': accent,
@@ -52,45 +50,45 @@ export function PathNodeCard({ node, nextNode, points, state, accent, side, inde
         <article
           className={`path-node-card path-node-card--${state} ${isCurrent ? 'animate-path-pulse' : ''}`}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 sm:gap-4">
             <div
-              className={`w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-xl sm:text-2xl flex-shrink-0 transition-transform ${isCurrent ? 'scale-110' : ''}`}
+              className={`path-node-icon ${isCurrent ? 'path-node-icon--current' : ''}`}
               style={{
                 background: unlocked ? `${accent}40` : 'rgba(0,0,0,0.2)',
                 border: `2px solid ${unlocked ? accent : 'rgba(255,255,255,0.2)'}`,
               }}
             >
               {unlocked ? (
-                node.emoji
+                <span className="text-2xl sm:text-3xl leading-none">{node.emoji}</span>
               ) : (
-                <Lock className="w-5 h-5 text-white/60" aria-hidden />
+                <Lock className="w-6 h-6 text-white/60" aria-hidden />
               )}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-white/70">
+              <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-white/75">
                 {node.minPoints.toLocaleString('tr-TR')} kupa
               </p>
-              <h3 className="font-display font-bold text-xs sm:text-sm uppercase text-white leading-tight truncate">
+              <h3 className="font-display font-bold text-sm sm:text-base uppercase text-white leading-snug">
                 {node.title}
               </h3>
               {state === 'locked' && remaining > 0 && (
-                <p className="text-[10px] font-semibold mt-1 text-white/80">
+                <p className="text-xs font-semibold mt-1.5 text-white/85">
                   {remaining.toLocaleString('tr-TR')} kupa kaldı
                 </p>
               )}
               {unlocked && (
-                <div className="flex items-center gap-1 mt-1">
+                <div className="flex items-center gap-1.5 mt-1.5">
                   {isCurrent ? (
                     <>
-                      <Sparkles className="w-3 h-3" style={{ color: accent }} />
-                      <span className="text-[10px] font-bold" style={{ color: accent }}>
+                      <Sparkles className="w-3.5 h-3.5 flex-shrink-0" style={{ color: accent }} />
+                      <span className="text-xs font-bold" style={{ color: accent }}>
                         Buradasın
                       </span>
                     </>
                   ) : (
                     <>
-                      <Check className="w-3 h-3" style={{ color: accent }} />
-                      <span className="text-[10px] font-bold text-white/70">Tamamlandı</span>
+                      <Check className="w-3.5 h-3.5 flex-shrink-0" style={{ color: accent }} />
+                      <span className="text-xs font-bold text-white/75">Tamamlandı</span>
                     </>
                   )}
                 </div>
@@ -98,8 +96,8 @@ export function PathNodeCard({ node, nextNode, points, state, accent, side, inde
             </div>
           </div>
           {(isCurrent || (unlocked && progress > 0 && progress < 100)) && nextNode && (
-            <div className="mt-3">
-              <div className="h-1.5 rounded-full overflow-hidden bg-black/20">
+            <div className="mt-4">
+              <div className="h-2 rounded-full overflow-hidden bg-black/25">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{ width: `${progress}%`, background: accent }}
@@ -110,12 +108,13 @@ export function PathNodeCard({ node, nextNode, points, state, accent, side, inde
         </article>
 
         <div
-          className="path-node-dot"
+          className="path-node-dot path-node-dot--lg"
           style={{
-            [side === 'right' ? 'left' : 'right']: side === 'center' ? '50%' : '-1.75rem',
-            marginLeft: side === 'center' ? '-7px' : undefined,
+            left: side === 'center' ? '50%' : side === 'left' ? '0.5rem' : undefined,
+            right: side === 'right' ? '0.5rem' : undefined,
+            marginLeft: side === 'center' ? '-9px' : undefined,
             background: unlocked ? accent : 'transparent',
-            boxShadow: isCurrent ? `0 0 14px ${accent}` : undefined,
+            boxShadow: isCurrent ? `0 0 16px ${accent}` : undefined,
           }}
         />
       </div>

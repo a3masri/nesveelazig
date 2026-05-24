@@ -245,11 +245,12 @@ export default function Dashboard() {
             <Link key={r.id} to="/store" className="block">
               <CompactTicketCard
                 name={r.name}
+                description={r.description}
                 emoji={r.emoji}
                 category={r.category}
                 rarity={r.rarity}
                 pointCost={r.point_cost}
-                locked={points < r.point_cost}
+                canAfford={points >= r.point_cost}
               />
             </Link>
           ))}

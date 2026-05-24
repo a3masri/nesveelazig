@@ -40,7 +40,7 @@ export default function Store() {
     let list = category === 'all' ? rewards : rewards.filter(r => r.category === category);
     if (search.trim()) {
       const q = search.toLowerCase();
-      list = list.filter(r => r.name.toLowerCase().includes(q));
+      list = list.filter(r => r.name.toLowerCase().includes(q) || r.description?.toLowerCase().includes(q));
     }
     return [...list].sort((a, b) => a.point_cost - b.point_cost);
   }, [rewards, category, search]);
@@ -118,23 +118,23 @@ export default function Store() {
         ))}
       </div>
 
-      <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {filtered.map(reward => {
           const canAfford = points >= reward.point_cost;
           const outOfStock = reward.stock !== null && reward.stock <= 0;
-          const locked = !canAfford || outOfStock;
           return (
             <CompactTicketCard
               key={reward.id}
               name={reward.name}
+              description={reward.description}
               emoji={reward.emoji}
               category={reward.category}
               rarity={reward.rarity}
               pointCost={reward.point_cost}
-              locked={locked}
-              disabled={locked}
-              onClick={() => !locked && setSelected(reward)}
-              showBuy={!locked}
+              canAfford={canAfford}
+              outOfStock={outOfStock}
+              onClick={() => !outOfStock && setSelected(reward)}
+              showBuy={!outOfStock}
               onBuy={() => setSelected(reward)}
             />
           );

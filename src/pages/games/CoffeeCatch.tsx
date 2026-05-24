@@ -4,10 +4,14 @@ import { GameLayout } from '../../components/games/GameLayout';
 import { awardPoints } from '../../lib/gameRewards';
 import { playCatch, playLose, playWin, playTap } from '../../lib/sounds';
 
-type Item = { id: number; x: number; y: number; emoji: string; good: boolean };
+type Item = { id: number; x: number; y: number; emoji: string; good: boolean; caught?: boolean };
 
 const GOOD = ['☕', '🥐', '🍪'];
 const BAD = ['💣', '🧊'];
+const GAME_MS = 30000;
+const BASKET_Y = 86;
+const CATCH_RANGE = 20;
+const FALL_SPEED = 2.8;
 
 export default function CoffeeCatch() {
   const { profile, setProfile } = useProfile();
@@ -19,11 +23,25 @@ export default function CoffeeCatch() {
   const [playing, setPlaying] = useState(false);
   const [confetti, setConfetti] = useState(false);
   const [result, setResult] = useState<{ type: 'win' | 'lose' | 'info'; message: string } | null>(null);
+
+  const basketRef = useRef(50);
+  const scoreRef = useRef(0);
+  const livesRef = useRef(3);
+  const playingRef = useRef(false);
   const idRef = useRef(0);
 
+  const syncBasket = (pct: number) => {
+    const v = Math.max(10, Math.min(90, pct));
+    basketRef.current = v;
+    setBasket(v);
+  };
+
   const endGame = useCallback(
-    (won: boolean, finalScore: number) => {
+    (won: boolean) => {
+      if (!playingRef.current) return;
+      playingRef.current = false;
       setPlaying(false);
+      const finalScore = scoreRef.current;
       if (won && profile && finalScore > 0) {
         awardPoints(profile, setProfile, finalScore);
         playWin();
@@ -38,83 +56,115 @@ export default function CoffeeCatch() {
     [profile, setProfile]
   );
 
+  const loseLife = useCallback(() => {
+    livesRef.current -= 1;
+    setLives(livesRef.current);
+    playLose();
+    if (livesRef.current <= 0) endGame(false);
+  }, [endGame]);
+
   useEffect(() => {
     if (!playing) return;
+
     const spawn = setInterval(() => {
-      const good = Math.random() > 0.25;
+      if (!playingRef.current) return;
+      const good = Math.random() > 0.28;
       const pool = good ? GOOD : BAD;
       setItems(prev => [
         ...prev,
         {
           id: idRef.current++,
-          x: 10 + Math.random() * 80,
+          x: 12 + Math.random() * 76,
           y: 0,
-          emoji: pool[Math.floor(Math.random() * pool.length)],
+          emoji: pool[Math.floor(Math.random() * pool.length)]!,
           good,
         },
       ]);
-    }, 700);
+    }, 650);
 
-    const tick = setInterval(() => {
+    let raf = 0;
+    let last = performance.now();
+
+    const tick = (now: number) => {
+      if (!playingRef.current) return;
+      const dt = Math.min(2.5, (now - last) / 16.67);
+      last = now;
+
       setItems(prev => {
         const next: Item[] = [];
-        let missed = 0;
-        prev.forEach(it => {
-          const ny = it.y + 4;
-          if (ny > 92 && ny < 100) {
-            const caught = Math.abs(it.x - basket) < 14;
+        const b = basketRef.current;
+
+        for (const it of prev) {
+          if (it.caught) continue;
+          const ny = it.y + FALL_SPEED * dt;
+
+          if (ny >= BASKET_Y - 4 && ny <= BASKET_Y + 10) {
+            const caught = Math.abs(it.x - b) < CATCH_RANGE;
             if (caught) {
               if (it.good) {
-                setScore(s => s + 5);
+                scoreRef.current += 5;
+                setScore(scoreRef.current);
                 playCatch();
               } else {
-                setLives(l => {
-                  const n = l - 1;
-                  if (n <= 0) endGame(false, score);
-                  return n;
-                });
-                playLose();
+                loseLife();
               }
-            } else if (it.good) missed++;
+              continue;
+            }
           }
-          if (ny < 100) next.push({ ...it, y: ny });
-          else if (it.good && !it.good) missed++;
-          else if (it.good) {
-            setLives(l => {
-              const n = l - 1;
-              if (n <= 0) endGame(false, score);
-              return n;
-            });
+
+          if (ny > 100) {
+            if (it.good) loseLife();
+            continue;
           }
-        });
+
+          next.push({ ...it, y: ny });
+        }
         return next;
       });
-    }, 50);
 
-    const timer = setTimeout(() => endGame(true, score), 30000);
+      raf = requestAnimationFrame(tick);
+    };
+
+    raf = requestAnimationFrame(tick);
+    const timer = window.setTimeout(() => endGame(true), GAME_MS);
 
     return () => {
       clearInterval(spawn);
-      clearInterval(tick);
+      cancelAnimationFrame(raf);
       clearTimeout(timer);
     };
-  }, [playing, basket, score, endGame]);
+  }, [playing, endGame, loseLife]);
 
   const start = () => {
     playTap();
+    idRef.current = 0;
+    scoreRef.current = 0;
+    livesRef.current = 3;
+    playingRef.current = true;
     setItems([]);
     setScore(0);
     setLives(3);
     setResult(null);
     setPlaying(true);
+    syncBasket(50);
   };
 
   const moveBasket = (clientX: number) => {
     const el = areaRef.current;
-    if (!el) return;
+    if (!el || !playingRef.current) return;
     const rect = el.getBoundingClientRect();
-    const pct = ((clientX - rect.left) / rect.width) * 100;
-    setBasket(Math.max(8, Math.min(92, pct)));
+    syncBasket(((clientX - rect.left) / rect.width) * 100);
+  };
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    if (!playingRef.current) return;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    moveBasket(e.clientX);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!playingRef.current || !e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    moveBasket(e.clientX);
   };
 
   return (
@@ -126,37 +176,53 @@ export default function CoffeeCatch() {
     >
       <div className="flex justify-center gap-6 text-sm font-bold mb-4">
         <span className="text-cr-gold">Skor: {score}</span>
-        <span style={{ color: 'var(--text-secondary)' }}>Can: {'❤️'.repeat(lives)}</span>
+        <span style={{ color: 'var(--text-secondary)' }}>Can: {'❤️'.repeat(Math.max(0, lives))}</span>
       </div>
 
       <div
         ref={areaRef}
-        className="game-panel relative mx-auto w-full max-w-sm h-72 overflow-hidden touch-none select-none"
-        onPointerMove={e => playing && moveBasket(e.clientX)}
-        onPointerDown={e => playing && moveBasket(e.clientX)}
+        className="catch-arena game-panel relative mx-auto w-full max-w-sm overflow-hidden touch-none select-none"
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={e => {
+          try {
+            (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+          } catch {
+            /* ignore */
+          }
+        }}
+        onPointerCancel={e => {
+          try {
+            (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
+          } catch {
+            /* ignore */
+          }
+        }}
       >
+        <div className="catch-zone-line" aria-hidden />
         {items.map(it => (
           <span
             key={it.id}
-            className="absolute text-2xl transition-none pointer-events-none"
+            className="catch-item absolute text-3xl pointer-events-none will-change-transform"
             style={{ left: `${it.x}%`, top: `${it.y}%`, transform: 'translate(-50%, -50%)' }}
           >
             {it.emoji}
           </span>
         ))}
-        <div
-          className="absolute bottom-2 h-10 w-16 rounded-xl border-2 border-cr-gold flex items-center justify-center text-xl bg-cr-gold/20"
-          style={{ left: `${basket}%`, transform: 'translateX(-50%)' }}
-        >
-          ☕
+        <div className="catch-basket" style={{ left: `${basket}%` }}>
+          <span className="text-2xl">☕</span>
         </div>
       </div>
+
+      <p className="text-center text-[10px] mt-3 font-semibold" style={{ color: 'var(--text-muted)' }}>
+        Sepeti sürüklemek için parmağını ekranda kaydır
+      </p>
 
       <button
         type="button"
         onClick={start}
         disabled={playing}
-        className="btn-duo btn-duo-green w-full max-w-sm mx-auto mt-6 py-3.5 rounded-2xl text-sm min-h-[48px] block"
+        className="btn-duo btn-duo-green w-full max-w-sm mx-auto mt-4 py-3.5 rounded-2xl text-sm min-h-[48px] block"
       >
         {playing ? 'Oynanıyor...' : 'Başla'}
       </button>

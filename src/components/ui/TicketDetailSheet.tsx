@@ -51,7 +51,23 @@ export function TicketDetailSheet(props: Props) {
           <h2 className="font-display text-lg font-bold uppercase mt-2" style={{ color: 'var(--text-primary)' }}>
             {reward.name}
           </h2>
+          {reward.description && (
+            <p className="text-sm mt-2 px-2 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+              {reward.description}
+            </p>
+          )}
         </div>
+
+        <div className="ticket-sheet-info-block">
+          <span className="label">Başlık</span>
+          <span className="value">{reward.name}</span>
+        </div>
+        {reward.description && (
+          <div className="ticket-sheet-info-block">
+            <span className="label">Açıklama</span>
+            <span className="value text-left">{reward.description}</span>
+          </div>
+        )}
 
         <div className="ticket-sheet-row">
           <span style={{ color: 'var(--text-muted)' }}>Fiyat</span>
@@ -113,7 +129,17 @@ export function TicketDetailSheet(props: Props) {
           <span className={`inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded uppercase ticket-status-${ticket.status}`}>
             {STATUS_LABELS[ticket.status]}
           </span>
+          {reward?.description && (
+            <p className="text-xs mt-2 line-clamp-3" style={{ color: 'var(--text-muted)' }}>
+              {reward.description}
+            </p>
+          )}
         </div>
+      </div>
+
+      <div className="ticket-sheet-info-block mb-3">
+        <span className="label">Durum</span>
+        <span className={`value ticket-status-${ticket.status}`}>{STATUS_LABELS[ticket.status]}</span>
       </div>
 
       <div className="ticket-sheet-code-block">

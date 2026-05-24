@@ -150,7 +150,7 @@ export default function Progress() {
                 )}
               </header>
 
-              <div className="relative max-w-md mx-auto">
+              <div className="relative max-w-lg mx-auto path-nodes-track">
                 {nodes.map((node, nodeIdx) => {
                   const globalIdx = JOURNEY_NODES.findIndex(n => n.id === node.id);
                   const state = getNodeState(points, node, globalIdx, currentNodeIndex);

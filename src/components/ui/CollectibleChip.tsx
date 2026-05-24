@@ -1,3 +1,4 @@
+import { Star } from 'lucide-react';
 import { getCategoryEmoji } from '../../lib/brandAssets';
 import { getRarityStyle, getFrameClass } from '../../lib/gameUi';
 import { playTap, playHover } from '../../lib/sounds';
@@ -10,14 +11,25 @@ const STATUS_LABELS: Record<string, string> = {
 
 type CollectionTicketProps = {
   name: string;
+  description?: string;
   emoji?: string | null;
   category?: string;
   rarity: string;
+  pointValue?: number;
   status: 'active' | 'redeemed' | 'expired' | string;
   onClick?: () => void;
 };
 
-export function CollectibleChip({ name, emoji, category, rarity, status, onClick }: CollectionTicketProps) {
+export function CollectibleChip({
+  name,
+  description,
+  emoji,
+  category,
+  rarity,
+  pointValue,
+  status,
+  onClick,
+}: CollectionTicketProps) {
   const rc = getRarityStyle(rarity);
   const frame = getFrameClass(rarity);
   const displayEmoji = getCategoryEmoji(category, emoji);
@@ -67,6 +79,17 @@ export function CollectibleChip({ name, emoji, category, rarity, status, onClick
       <hr className="collection-ticket-tear" aria-hidden />
 
       <span className="collection-ticket-name">{name}</span>
+
+      {description && (
+        <p className="collection-ticket-desc">{description}</p>
+      )}
+
+      {pointValue !== undefined && pointValue > 0 && (
+        <div className="collection-ticket-value">
+          <Star className="w-3 h-3 text-cr-gold" />
+          <span>{pointValue.toLocaleString('tr-TR')}</span>
+        </div>
+      )}
     </button>
   );
 }

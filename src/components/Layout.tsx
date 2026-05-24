@@ -144,9 +144,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </aside>
       )}
 
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-30 px-3 pt-2 pb-1 pointer-events-none safe-area-top">
+      {!isAdminDashboard && (
+      <div className="lg:hidden sticky top-0 left-0 right-0 z-40 px-3 pt-2 pb-1 safe-area-top mobile-app-header">
         <div
-          className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border backdrop-blur-md pointer-events-auto"
+          className="flex items-center justify-between gap-2 px-3 py-2.5 rounded-2xl border backdrop-blur-md"
           style={{
             background: 'rgba(var(--bg-card-rgb), 0.92)',
             borderColor: 'var(--border)',
@@ -174,8 +175,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       </div>
+      )}
 
-      {mobileOpen && (
+      {mobileOpen && !isAdminDashboard && (
         <div className="lg:hidden fixed inset-0 z-40" onClick={() => setMobileOpen(false)}>
           <div className="absolute inset-0 bg-black/60" />
           <nav
@@ -210,8 +212,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <main className={`app-main-layer flex-1 min-h-screen pt-[5.75rem] lg:pt-0 w-full min-w-0 ${isAdminDashboard ? '' : 'lg:ml-72'}`}>
-        <div className={isAdmin ? 'max-w-7xl mx-auto p-4 lg:p-8' : 'max-w-6xl mx-auto p-4 lg:p-8'}>{children}</div>
+      <main
+        className={`app-main-layer flex-1 min-h-screen w-full min-w-0 ${
+          isAdminDashboard ? 'pt-0 lg:pt-0' : 'pt-2 lg:pt-0 lg:ml-72'
+        }`}
+      >
+        <div className={isAdmin ? 'max-w-7xl mx-auto p-4 lg:p-8' : 'max-w-6xl mx-auto px-4 pb-4 pt-1 lg:p-8'}>{children}</div>
       </main>
 
       {!isAdmin && (
