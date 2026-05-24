@@ -88,7 +88,7 @@ export default function Store() {
   const points = profile?.total_points ?? 0;
 
   return (
-    <div className="pb-24 lg:pb-8 page-stack animate-fade-in overflow-x-hidden">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <Confetti active={showConfetti} />
       <AppHeader title="Dükkan" subtitle={`${points.toLocaleString('tr-TR')} kupa`} />
 
@@ -100,7 +100,7 @@ export default function Store() {
         className="ui-input w-full min-h-[48px]"
       />
 
-      <div className="flex gap-2 overflow-x-auto pb-1">
+      <div className="scroll-x-chips">
         {CATEGORIES.map(c => (
           <button
             key={c}

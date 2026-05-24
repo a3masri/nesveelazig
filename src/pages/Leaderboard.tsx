@@ -78,7 +78,7 @@ export default function Leaderboard() {
   ];
 
   return (
-    <div className="pb-24 lg:pb-8 space-y-6 animate-fade-in">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <AppHeader title="Sıralama" subtitle={`${leaders.length} kahraman yarışıyor`} />
 
       <div className="flex gap-2 flex-wrap">

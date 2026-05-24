@@ -50,7 +50,7 @@ export default function Redeem() {
   };
 
   return (
-    <div className="pb-20 lg:pb-0 space-y-6 animate-fade-in">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <div>
         <h1 className="font-display text-2xl sm:text-3xl font-bold uppercase text-stroke" style={{ color: 'var(--text-primary)' }}>
           Kod Kullan

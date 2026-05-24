@@ -22,7 +22,7 @@ export function AppHeader({ title, subtitle, showSearch = false }: AppHeaderProp
     <>
       {/* Mobile: slim page title — no second logo header */}
       {(title || subtitle) && (
-        <div className="lg:hidden mb-3 flex items-end justify-between gap-3 min-h-[44px]">
+        <div className="lg:hidden mb-2 flex items-end justify-between gap-3">
           <div className="min-w-0 flex-1">
             {title && (
               <h1 className="font-display text-lg font-bold uppercase leading-tight truncate" style={{ color: 'var(--text-primary)' }}>

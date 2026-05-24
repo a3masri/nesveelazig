@@ -12,7 +12,7 @@ type GameLayoutProps = {
 
 export function GameLayout({ title, subtitle, children, confetti = false, result }: GameLayoutProps) {
   return (
-    <div className="pb-24 lg:pb-8 animate-fade-in max-w-lg mx-auto w-full overflow-x-hidden">
+    <div className="animate-fade-in max-w-lg mx-auto w-full overflow-x-hidden">
       <Confetti active={confetti} />
       <Link
         to="/oyunlar"

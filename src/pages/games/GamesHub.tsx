@@ -17,7 +17,7 @@ export default function GamesHub() {
   const quizLeft = 3 - getDailyPlayCount('cafe-quiz');
 
   return (
-    <div className="pb-24 lg:pb-8 page-stack animate-fade-in overflow-x-hidden">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <AppHeader title="Oyunlar" subtitle="Eğlen, kupa kazan" />
 
       <div className="surface-panel p-4 flex items-start gap-3">

@@ -35,7 +35,7 @@ export default function Achievements() {
   const totalCount = allAchievements.length || 1;
   if (loading) return <div className="flex items-center justify-center min-h-[60vh]"><div className="w-8 h-8 border-3 border-cr-gold/30 border-t-cr-gold rounded-full animate-spin" /></div>;
   return (
-    <div className="pb-20 lg:pb-0 space-y-6 animate-fade-in">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <Confetti active={showConfetti} />
       <div><h1 className="font-display text-2xl sm:text-3xl font-bold uppercase text-stroke" style={{ color: 'var(--text-primary)' }}>Başarılar</h1><p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>{unlockedCount}/{totalCount} rozet açıldı</p></div>
       <div className="rounded-xl p-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border)' }}><div className="flex items-center justify-between mb-2"><span className="text-xs font-bold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>Koleksiyon İlerlemesi</span><span className="text-xs font-bold text-cr-gold">{Math.round((unlockedCount / totalCount) * 100)}%</span></div><div className="progress-track h-3"><div className="progress-fill h-full bg-cr-gold" style={{ width: `${(unlockedCount / totalCount) * 100}%` }} /></div></div>

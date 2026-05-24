@@ -128,7 +128,7 @@ export default function Dashboard() {
   const tip = TIPS[new Date().getDate() % TIPS.length];
 
   return (
-    <div className="pb-24 lg:pb-8 page-stack animate-fade-in overflow-x-hidden">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       {/* Welcome */}
       <section className="dash-hero">
         <div className="flex items-start justify-between gap-3 mb-3">

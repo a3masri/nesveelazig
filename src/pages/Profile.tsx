@@ -98,7 +98,7 @@ export default function Profile() {
   const gamesPlayed = getDailyPlayCount('spin-wheel') + getDailyPlayCount('cafe-quiz');
 
   return (
-    <div className="pb-24 lg:pb-8 page-stack animate-fade-in overflow-x-hidden">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       {/* Member hero */}
       <section className="profile-hero">
         <div className="flex items-start gap-4">

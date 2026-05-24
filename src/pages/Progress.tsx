@@ -80,7 +80,7 @@ export default function Progress() {
   const accent = PATH_VIBES[activeVibe]?.accent ?? '#FFD700';
 
   return (
-    <div className="pb-24 lg:pb-8 page-stack animate-fade-in">
+    <div className="page-stack animate-fade-in overflow-x-hidden">
       <Confetti active={celebrate} />
       <AppHeader title="Mevsim Yolu" subtitle={`${currentRank.name} · ${points.toLocaleString('tr-TR')} kupa`} />
 

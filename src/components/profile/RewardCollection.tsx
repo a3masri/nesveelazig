@@ -92,7 +92,7 @@ export function RewardCollection({ previewLimit, showHeader = true, id = 'reward
       )}
 
       {!previewLimit && (
-        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1">
+        <div className="scroll-x-chips">
           {FILTERS.map(f => (
             <button
               key={f.id}
